@@ -8,7 +8,7 @@ Auger.Dispatcher._onhashchange = function(){
 		var v = null, t = a[i][1];
 		switch(a[i][0]){
 			case 0: v=true; break;
-			case 1: v=(h.indexOf(t)==0); break;
+			case 1: v=(h.indexOf(t)==0?h.split(t.charAt(t.length-1)):null); break;
 			case 2: v=h.match(t); break;
 			case 3: v=t(h); break;
 		}
