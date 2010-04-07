@@ -5,14 +5,14 @@ Auger.Dispatcher._onhashchange = function(){
 	var a=Auger.Dispatcher._actions;
 	var h=Auger.Dispatcher.getHash();
 	for(var i=0;i<a.length;++i){
-		var b = false, t = a[i][1], v = null;
+		var v = null, t = a[i][1];
 		switch(a[i][0]){
-			case 0: b=v=true; break;
-			case 1:   v=h.indexOf(t); b=(v==0); break;
-			case 2: b=v=h.match(t); break;
-			case 3: b=v=t(h); break;
+			case 0: v=true; break;
+			case 1: v=(h.indexOf(t)==0); break;
+			case 2: v=h.match(t); break;
+			case 3: v=t(h); break;
 		}
-		if(b) a[i][2](h, v);
+		if(v) a[i][2](h, v); 	// call as a method on the event (for consistency)
 	}
 };
 // prefix string, regex, or boolean function (allows multiple "apps" on the same page)
