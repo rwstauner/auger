@@ -31,8 +31,9 @@ Auger.Dispatcher.dispatch = function(c,f){
 		this._actions.push(d);
 	else
 		throw("Unknown argument: " + c);
-	this._lastHash = this.getHash();
-	Auger.Event.add(window, 'hashchange', this._onhashchange);
+	this._lastHash = this.getHash(); 	// requires the page to load the initial hash
+	if( this._actions.length == 1) 	// only add it the first time since we roll through all the possibilities
+		Auger.Event.add(window, 'hashchange', this._onhashchange);
 };
 Auger.Dispatcher.getHash = function(){
 	//var h = location.hash; return h ? h.replace(/^#+/,'') : location.href.replace(/^[^#]*#/,'');
