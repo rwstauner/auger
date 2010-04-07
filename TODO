@@ -1,0 +1,22 @@
+---
+- Auger.Event:
+  - event models:
+    - DOM Level 2
+    - IE (attachEvent)
+	- DOM Level 0 (obj.onchange)
+  - synthesize:
+    - domready
+	- hashchange
+- Auger.Dispatcher:
+  - string prefix
+  - regular expression
+  - function
+- Auger.Ajax:
+  - do
+  - fill
+- Auger.DOM
+- Auger.Storage
+  - cookies
+  - localStorage
+- haXe extern classes (or just do it in haXe)
+- check wounded.js
