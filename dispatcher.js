@@ -19,7 +19,8 @@ Auger.Dispatcher._onhashchange = function(e){ 	// gets detached (avoid unnecessa
 // prefix string, regex, or boolean function (allows multiple "apps" on the same page)
 Auger.Dispatcher._dispatch_types = [null, 'string', RegExp, Function];
 Auger.Dispatcher.dispatch = function(c,f){
-	var t = this._dispatch_types, d = null;
+	var a = Auger.Dispatcher; 	// this
+	var t = a._dispatch_types, d = null;
 	if(!f)
 		d = [0,null,c];
 	else if(typeof(c) == 'string')
@@ -28,13 +29,13 @@ Auger.Dispatcher.dispatch = function(c,f){
 		for(var i=2; i<t.length; ++i)
 			if(c instanceof t[i])
 				d = [i,c,f];
-	if( d )
-		this._actions.push(d);
+	if(d)
+		a._actions.push(d);
 	else
 		throw("Unknown argument: " + c);
-	this._lastHash = this.getHash(); 	// requires the page to load the initial hash
-	if( this._actions.length == 1) 	// only add it the first time since we roll through all the possibilities
-		this.listen(this._onhashchange);
+	a._lastHash = a.getHash(); 	// requires the page to load the initial hash
+	if(a._actions.length == 1) 	// only add it the first time since we roll through all the possibilities
+		a.listen(a._onhashchange);
 };
 Auger.Dispatcher.getHash = function(){
 	//var h = location.hash; return h ? h.replace(/^#+/,'') : location.href.replace(/^[^#]*#/,'');
