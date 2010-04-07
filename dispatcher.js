@@ -1,7 +1,8 @@
 // @require Auger.Event
 window.Auger || (window.Auger = {});
 Auger.Dispatcher = {_actions: []};
-Auger.Dispatcher._onhashchange = function(){
+Auger.Dispatcher._onhashchange = function(e){ 	// gets detached (avoid unnecessary closure)
+	if(!e)e=window.event;
 	var a=Auger.Dispatcher._actions;
 	var h=Auger.Dispatcher.getHash();
 	for(var i=0;i<a.length;++i){
@@ -12,7 +13,7 @@ Auger.Dispatcher._onhashchange = function(){
 			case 2: v=h.match(t); break;
 			case 3: v=t(h); break;
 		}
-		if(v) a[i][2](h, v); 	// call as a method on the event (for consistency)
+		if(v) a[i][2].call(e, h, v); 	// call as a method on the event (for consistency)
 	}
 };
 // prefix string, regex, or boolean function (allows multiple "apps" on the same page)
