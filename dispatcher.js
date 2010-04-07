@@ -14,7 +14,7 @@ Auger.Dispatcher._onhashchange = function(e){ 	// gets detached (avoid unnecessa
 			case 3: try{v=t(h);}catch(e){v=null;}; break;
 		}
 		if(v) try{ 	// don't let the errors of one dispatched method keep the others from executing
-			a[i][2].call(e, h, v); 	// call as a method on the event (for consistency)
+			a[i][2].call(this, e, h, v); 	// call as a method on the element and send event (for consistency)
 		}catch(e){}
 	}
 };
