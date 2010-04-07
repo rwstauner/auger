@@ -34,7 +34,7 @@ Auger.Dispatcher.dispatch = function(c,f){
 		throw("Unknown argument: " + c);
 	this._lastHash = this.getHash(); 	// requires the page to load the initial hash
 	if( this._actions.length == 1) 	// only add it the first time since we roll through all the possibilities
-		Auger.Event.add(window, 'hashchange', this._onhashchange);
+		this.listen(this._onhashchange);
 };
 Auger.Dispatcher.getHash = function(){
 	//var h = location.hash; return h ? h.replace(/^#+/,'') : location.href.replace(/^[^#]*#/,'');
@@ -46,3 +46,10 @@ Auger.Dispatcher.setHash = function(h){
 	if((f = this._iframe)) f.src = f.src.replace(/#.*$/, h);
 	location.hash = h;
 };
+Auger.Dispatcher.listen = function(f){ 			// override with desired event library
+	var e = 'hashchange';
+	var oe = 'on'+e;
+	if(Auger.Event) Auger.Event.add(window, e, f);
+	else if(oe in window) window[oe] = f;
+	else throw('Event library required if window does not support '+oe);
+}
