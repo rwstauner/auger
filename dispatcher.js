@@ -35,8 +35,10 @@ Auger.Dispatcher.dispatch = function(c,f){
 		a._actions.push(d);
 	else
 		throw("Unknown argument: " + c);
-	if(a._actions.length == 1) 	// only add it the first time since we roll through all the possibilities
+	if(a._actions.length == 1){ 	// only add it the first time since we roll through all the possibilities
 		a.listen('hashchange', a._onhashchange);
+		a.listen('load', a._onhashchange); 		// if the window has already loaded this probably won't run
+	}
 };
 Auger.Dispatcher.getHash = function(){
 	//var h = location.hash; return h ? h.replace(/^#+/,'') : location.href.replace(/^[^#]*#/,'');
