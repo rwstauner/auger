@@ -45,6 +45,7 @@ Auger.Dispatcher.getHash = function(){
 	return location.href.replace(/^[^#]*#/,'');
 };
 Auger.Dispatcher.setHash = function(h){
+	if(!h)h='';
 	if(h.charAt(0) != '#') h = '#'+h;
 	location.hash = h;
 };
