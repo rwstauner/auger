@@ -11,11 +11,11 @@ Auger.Dispatcher._onhashchange = function(e){ 	// gets detached (avoid unnecessa
 			case 0: v=true; break;
 			case 1: v=(h.indexOf(t)==0?h.split(t.charAt(t.length-1)):null); break;
 			case 2: v=h.match(t); break;
-			case 3: try{v=t(h);}catch(e){v=null;}; break;
+			case 3: try{v=t(h);}catch(x){v=null;}; break;
 		}
 		if(v) try{ 	// don't let the errors of one dispatched method keep the others from executing
 			a[i][2].call(this, e, h, v); 	// call as a method on the element and send event (for consistency)
-		}catch(e){}
+		}catch(x){}
 	}
 };
 // prefix string, regex, or boolean function (allows multiple "apps" on the same page)
