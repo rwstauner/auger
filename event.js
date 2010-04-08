@@ -6,6 +6,7 @@ Auger.Event = {};
 if(document.addEventListener){
 	Auger.Event.add    = function(l, t, f){ l.addEventListener(t, f, false); };
 	Auger.Event.remove = function(l, t, f){ l.removeEventListener(t, f, false); };
+	Auger.Event.send   = function(l, t){ var e=document.createEvent('Events'); e.initEvent(t,true,false); l.dispatchEvent(e); };
 }
 else if(document.attachEvent){ 	// IE [5+]
 	Auger.Event.add = function(l, t, f) {
@@ -53,6 +54,7 @@ else if(document.attachEvent){ 	// IE [5+]
 			delete wn[hid];
 		}
 	};
+	Auger.Event.send = function(l, t){ var e = document.createEventObject(); l.fireEvent('on'+t,e); }
 	Auger.Event._get = function(l, t, f) {
 		var nl = this._cache_l, nw = this._cache_w;
 		var hs = l[nl];
@@ -87,3 +89,4 @@ else if(document.attachEvent){ 	// IE [5+]
 }
 //else
 //	l['on'+e] = f;
+//	Auger.Event.send = function(l, t){ if(ot in l && typeof(l[ot]) == 'function') l[ot](); }
