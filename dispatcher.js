@@ -1,7 +1,7 @@
 // @require Auger.Event
 window.Auger || (window.Auger = {});
 Auger.Dispatcher = {_actions: []};
-Auger.Dispatcher._onhashchange = function(e){ 	// gets detached (avoid unnecessary closure)
+Auger.Dispatcher._perform = function(e){ 	// gets detached (avoid unnecessary closure)
 	if(!e)e=window.event;
 	var a=Auger.Dispatcher._actions;
 	var h=Auger.Dispatcher.getHash();
@@ -36,8 +36,8 @@ Auger.Dispatcher.dispatch = function(c,f){
 	else
 		throw("Unknown argument: " + c);
 	if(a._actions.length == 1){ 	// only add it the first time since we roll through all the possibilities
-		a.listen('hashchange', a._onhashchange);
-		a.listen('load', a._onhashchange); 		// if the window has already loaded this probably won't run
+		a.listen('hashchange', a._perform);
+		a.listen('load', a._perform); 		// if the window has already loaded this probably won't run
 	}
 };
 Auger.Dispatcher.getHash = function(){
