@@ -36,7 +36,7 @@ Auger.Dispatcher.dispatch = function(c,f){
 	else
 		throw("Unknown argument: " + c);
 	if(a._actions.length == 1) 	// only add it the first time since we roll through all the possibilities
-		a.listen(a._onhashchange);
+		a.listen('hashchange', a._onhashchange);
 };
 Auger.Dispatcher.getHash = function(){
 	//var h = location.hash; return h ? h.replace(/^#+/,'') : location.href.replace(/^[^#]*#/,'');
@@ -46,8 +46,7 @@ Auger.Dispatcher.setHash = function(h){
 	if(h.charAt(0) != '#') h = '#'+h;
 	location.hash = h;
 };
-Auger.Dispatcher.listen = function(f){ 			// override with desired event library
-	var e = 'hashchange';
+Auger.Dispatcher.listen = function(e,f){ 			// override with desired event library
 	var oe = 'on'+e;
 	if(Auger.Event) Auger.Event.add(window, e, f);
 	else if(oe in window) window[oe] = f;
