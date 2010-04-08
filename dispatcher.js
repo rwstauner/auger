@@ -44,9 +44,7 @@ Auger.Dispatcher.getHash = function(){
 	return location.hash.replace(/^#+/,'');
 };
 Auger.Dispatcher.setHash = function(h){
-	if( h.charAt(0) != '#' ) h = '#' + h;
-	var f;
-	if((f = this._iframe)) f.src = f.src.replace(/#.*$/, h);
+	if(h.charAt(0) != '#') h = '#'+h;
 	location.hash = h;
 };
 Auger.Dispatcher.listen = function(f){ 			// override with desired event library
