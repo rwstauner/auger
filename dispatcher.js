@@ -35,7 +35,6 @@ Auger.Dispatcher.dispatch = function(c,f){
 		a._actions.push(d);
 	else
 		throw("Unknown argument: " + c);
-	a._lastHash = a.getHash(); 	// requires the page to load the initial hash
 	if(a._actions.length == 1) 	// only add it the first time since we roll through all the possibilities
 		a.listen(a._onhashchange);
 };
