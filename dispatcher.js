@@ -41,8 +41,8 @@ Auger.Dispatcher.dispatch = function(c,f){
 	}
 };
 Auger.Dispatcher.getHash = function(){
-	//var h = location.hash; return h ? h.replace(/^#+/,'') : location.href.replace(/^[^#]*#/,'');
-	return location.hash.replace(/^#+/,'');
+	// location.hash gets url-decoded which could interfere with parsing
+	return location.href.replace(/^[^#]*#/,'');
 };
 Auger.Dispatcher.setHash = function(h){
 	if(h.charAt(0) != '#') h = '#'+h;
