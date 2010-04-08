@@ -4,7 +4,7 @@ Auger.Event = {};
 // Event.add(element, event, function)
 
 if(document.addEventListener){
-	Auger.Event.add    = function(l, t, f){ l.addEventListener(t, f, false); };
+	Auger.Event.add    = function(l, t, f){ this._prepared[t] || this.prepare(t); l.addEventListener(t, f, false); };
 	Auger.Event.remove = function(l, t, f){ l.removeEventListener(t, f, false); };
 	Auger.Event.send   = function(l, t){ var e=document.createEvent('Events'); e.initEvent(t,true,false); l.dispatchEvent(e); };
 }
@@ -90,3 +90,62 @@ else if(document.attachEvent){ 	// IE [5+]
 //else
 //	l['on'+e] = f;
 //	Auger.Event.send = function(l, t){ if(ot in l && typeof(l[ot]) == 'function') l[ot](); }
+Auger.Event._prepared = {};
+Auger.Event.prepare = function(t){
+	var a = this;
+	if(!a._prepared[t]){
+		a._prepared[t] = true;
+		if(a.synthesize[t]) 		// if an event synthesizer exists call it
+			a.synthesize[t](); 		// otherwise just ignore (and don't call prepare again)
+	}
+};
+Auger.Event.synthesize = {};
+// only define method for synthesizing if the browser doesn't natively support it
+if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode||0) < 8)){ // only ie8 in ie8 mode supports it
+	Auger.Event.synthesize.hashchange = function(){
+		//throw 'not implemented yet';
+		var _ = Auger.Event.synthesize.hashchange;
+		_._iframe = false;
+		_._start();
+
+	};
+	Auger.Event.synthesize.hashchange._start = function(h){
+		var _ = this;
+		if(!_._timer){ 	// ignore if timer already set
+			_._last = h||_._hash();
+			_._timer = setInterval(_._poll,250);
+		}
+	};
+	Auger.Event.synthesize.hashchange._stop  = function(){ clearInterval(this._timer); this._timer = null; };
+	Auger.Event.synthesize.hashchange._hash  = function(u){ 	// sending n sets hash
+		return (u||location.href).replace(/^[^#]*#?(.*)$/,'$1');
+	};
+	if( Auger.Event.synthesize.hashchange._iframe ){
+		Auger.Event.synthesize.hashchange._iframeHash  = function(u){
+			this._hash(this._iframe.document.location.href);
+		};
+		Auger.Event.synthesize.hashchange._iframeUpdate = function(h){
+			var _ = this, fr = _._iframe;
+			fr.document.open().close();
+			fr.location.hash = '#' + h;
+			//if((f = this._iframe)) f.src = f.src.replace(/#.*$/, h);
+		};
+	}
+	Auger.Event.synthesize.hashchange._poll = function(){
+		var _ = Auger.Event.synthesize.hashchange;
+		var b = false, h = _._hash(), f = _._iframe;
+		var fh = f ? _._iframeHash() : h;
+		if(h !== _._last){
+			b = true;
+			if(f && h !== fh) _._iframeUpdate(h);
+		}else if(f && fh !== _._last){
+			b = true;
+			location.href = location.href.replace(/#.*$/,'#'+fh);
+		}
+		if(b){
+			_._stop(); 									// pause polling until after events
+			Auger.Event.send(window, 'hashchange'); 	// synchronous (wait)
+			_._start(_._last=h); 						// resume polling
+		}
+	};
+}
