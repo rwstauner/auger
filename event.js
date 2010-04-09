@@ -132,7 +132,7 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 		var _ = this;
 		if(!_._timer){ 	// ignore if timer already set
 			_._last = h||_._hash();
-			_._timer = setInterval(_._poll,250);
+			_._timer = setInterval(_._poll,200);
 		}
 	};
 	Auger.Event.synthesize.hashchange._stop  = function(){ clearInterval(this._timer); this._timer = null; };
