@@ -3,9 +3,7 @@
   - event models:
 	- DOM Level 0 (obj.onchange)
   - synthesize:
-    - domready
-	- hashchange
-- Auger.Dispatcher:
+    - domready [//if( 'onreadystatechange' in document ) // 'DOMContentLoaded']
 - Auger.Ajax:
   - do
   - fill
@@ -13,5 +11,7 @@
 - Auger.Storage
   - cookies
   - localStorage
-- haXe extern classes (or just do it in haXe)
+- haXe:
+    - extern classes
+    - separate all js modules into separate files (jsunhx+)
 - check wounded.js
