@@ -9,6 +9,7 @@ if(document.addEventListener){
 	Auger.Event.send   = function(l, t){ var e=document.createEvent('Events'); e.initEvent(t,true,false); l.dispatchEvent(e); };
 }
 else if(document.attachEvent){ 	// IE [5+]
+	Auger.Event._isIE = true;
 	Auger.Event.add = function(l, t, f) {
 		var a = this;
 		if(!a.prepare(t, l, f)) return;
@@ -108,10 +109,22 @@ Auger.Event.prepare = function(t, l, f){
 Auger.Event.synthesize = {};
 // only define method for synthesizing if the browser doesn't natively support it
 if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode||0) < 8)){ // only ie8 in ie8 mode supports it
-	Auger.Event.synthesize.hashchange = function(){
+	Auger.Event.synthesize.hashchange = {_iframe: Auger.Event._isIE, _timer: null};
+	Auger.Event.synthesize.hashchange.init = function(){
 		//throw 'not implemented yet';
 		var _ = Auger.Event.synthesize.hashchange;
-		_._iframe = false;
+		if( _._iframe ){
+			var frame = document.createElement('iframe');
+			frame.setAttribute('src', 'javascript:"<html></html>"');
+			var s = frame.style;
+				s.position = 'absolute';
+				s.top = s.left = '-1px';
+				s.width = s.height = '1px';
+				s.display = 'none';
+			document.body.appendChild(frame);
+			_._iframe = frame.contentWindow;
+			_._iframeUpdate(_._hash());
+		}
 		_._start();
 		return !_._iframe; 	// return false to indicate that this custom even is not supported
 	};
@@ -131,8 +144,8 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 			return this._hash(this._iframe.location.href);
 		};
 		Auger.Event.synthesize.hashchange._iframeUpdate = function(h){
-			var _ = this, fr = _._iframe;
-			fr.document.open().close();
+			var fr = this._iframe;
+			fr.document.open().close(); 	// reset the iframe so IE will add a history entry
 			fr.location.hash = '#' + h;
 			//if((f = this._iframe)) f.src = f.src.replace(/#.*$/, h);
 		};
