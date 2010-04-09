@@ -121,8 +121,8 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 		return (u||location.href).replace(/^[^#]*#?(.*)$/,'$1');
 	};
 	if( Auger.Event.synthesize.hashchange._iframe ){
-		Auger.Event.synthesize.hashchange._iframeHash  = function(u){
-			this._hash(this._iframe.document.location.href);
+		Auger.Event.synthesize.hashchange._iframeHash  = function(){
+			return this._hash(this._iframe.location.href);
 		};
 		Auger.Event.synthesize.hashchange._iframeUpdate = function(h){
 			var _ = this, fr = _._iframe;
