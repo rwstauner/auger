@@ -4,13 +4,14 @@ Auger.Event = {};
 // Event.add(element, event, function)
 
 if(document.addEventListener){
-	Auger.Event.add    = function(l, t, f){ this._prepared[t] || this.prepare(t); l.addEventListener(t, f, false); };
+	Auger.Event.add    = function(l, t, f){ if(!this.prepare(t, l, f)) return; l.addEventListener(t, f, false); };
 	Auger.Event.remove = function(l, t, f){ l.removeEventListener(t, f, false); };
 	Auger.Event.send   = function(l, t){ var e=document.createEvent('Events'); e.initEvent(t,true,false); l.dispatchEvent(e); };
 }
 else if(document.attachEvent){ 	// IE [5+]
 	Auger.Event.add = function(l, t, f) {
 		var a = this;
+		if(!a.prepare(t, l, f)) return;
 		if(a._get(l, t, f) != -1) return; 	// ignore duplicates
 		var ff = function(e) {
 			if (!e) e = window.event;
@@ -91,13 +92,18 @@ else if(document.attachEvent){ 	// IE [5+]
 //	l['on'+e] = f;
 //	Auger.Event.send = function(l, t){ if(ot in l && typeof(l[ot]) == 'function') l[ot](); }
 Auger.Event._prepared = {};
-Auger.Event.prepare = function(t){
+Auger.Event._cached = {};
+Auger.Event.prepare = function(t, l, f){
 	var a = this;
-	if(!a._prepared[t]){
+	if(!(t in a._prepared)){
 		a._prepared[t] = true;
+		a._cached[t] = [];
 		if(a.synthesize[t]) 		// if an event synthesizer exists call it
-			a.synthesize[t](); 		// otherwise just ignore (and don't call prepare again)
+			a._prepared[t] = a.synthesize[t].init(l, f); // otherwise just ignore (and don't call prepare again)
 	}
+	if(!a._prepared[t])
+		a._cached[t].push([l,f]);
+	return a._prepared[t];
 };
 Auger.Event.synthesize = {};
 // only define method for synthesizing if the browser doesn't natively support it
@@ -107,7 +113,7 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 		var _ = Auger.Event.synthesize.hashchange;
 		_._iframe = false;
 		_._start();
-
+		return !_._iframe; 	// return false to indicate that this custom even is not supported
 	};
 	Auger.Event.synthesize.hashchange._start = function(h){
 		var _ = this;
@@ -132,8 +138,9 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 		};
 	}
 	Auger.Event.synthesize.hashchange._poll = function(){
-		var _ = Auger.Event.synthesize.hashchange;
-		var b = false, h = _._hash(), f = _._iframe;
+		var a = Auger.Event, et = 'hashchange';
+		var _ = a.synthesize[et];
+		var b = false, h = _._hash(), f = _._iframe, ac = a._cached[et];
 		var fh = f ? _._iframeHash() : h;
 		if(h !== _._last){
 			b = true;
@@ -144,7 +151,11 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 		}
 		if(b){
 			_._stop(); 									// pause polling until after events
-			Auger.Event.send(window, 'hashchange'); 	// synchronous (wait)
+			if(f) 										// IE doesn't allow custom events
+				for(var i=0;i<ac.length;++i) 			// so roll through the cache
+					ac[i][1].call(ac[i][0]);
+			else
+				Auger.Event.send(window, et); // synchronous (wait)
 			_._start(_._last=h); 						// resume polling
 		}
 	};
