@@ -15,3 +15,7 @@
     - extern classes
     - separate all js modules into separate files (jsunhx+)
 - check wounded.js
+- jslint
+- compression:
+  - yuicompressor
+  - closure compiler
