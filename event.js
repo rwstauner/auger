@@ -126,7 +126,7 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 			_._iframeUpdate(_._hash());
 		}
 		_._start();
-		return !_._iframe; 	// return false to indicate that this custom even is not supported
+		return !_._iframe; 	// return false to indicate that this custom event is not supported
 	};
 	Auger.Event.synthesize.hashchange._start = function(h){
 		var _ = this;
@@ -136,7 +136,7 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 		}
 	};
 	Auger.Event.synthesize.hashchange._stop  = function(){ clearInterval(this._timer); this._timer = null; };
-	Auger.Event.synthesize.hashchange._hash  = function(u){ 	// sending n sets hash
+	Auger.Event.synthesize.hashchange._hash  = function(u){
 		return (u||location.href).replace(/^[^#]*#?(.*)$/,'$1');
 	};
 	if( Auger.Event.synthesize.hashchange._iframe ){
