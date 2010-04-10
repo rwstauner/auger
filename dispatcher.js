@@ -42,7 +42,7 @@ Auger.Dispatcher.dispatch = function(c,f){
 };
 Auger.Dispatcher.getHash = function(){
 	// location.hash gets url-decoded which could interfere with parsing
-	return location.href.replace(/^[^#]*#/,'');
+	return location.href.replace(/^[^#]*#?/,'');
 };
 Auger.Dispatcher.setHash = function(h){
 	if(!h)h='';
