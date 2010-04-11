@@ -56,7 +56,14 @@ else if(document.attachEvent){ 	// IE [5+]
 			delete wn[hid];
 		}
 	};
-	Auger.Event.send = function(l, t){ var e = document.createEventObject(); l.fireEvent('on'+t,e); }
+	Auger.Event.send = function(l, t){
+		var i, c = this._cached[t], e = document.createEventObject();
+		if(c && c.length) 						// IE doesn't allow custom events
+			for(i=0;i<c.length;++i) 			// so roll through the cache
+				c[i][1].call(c[i][0],e);
+		else
+			l.fireEvent('on'+t,e);
+	};
 	Auger.Event._get = function(l, t, f) {
 		var nl = this._cache_l, nw = this._cache_w;
 		var hs = l[nl];
@@ -153,7 +160,7 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 	Auger.Event.synthesize.hashchange._poll = function(){
 		var a = Auger.Event, et = 'hashchange';
 		var _ = a.synthesize[et];
-		var b = false, h = _._hash(), f = _._iframe, ac = a._cached[et];
+		var b = false, h = _._hash(), f = _._iframe;
 		var fh = f ? _._iframeHash() : h;
 		if(h !== _._last){
 			b = true;
@@ -164,11 +171,7 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 		}
 		if(b){
 			_._stop(); 									// pause polling until after events
-			if(f) 										// IE doesn't allow custom events
-				for(var i=0;i<ac.length;++i) 			// so roll through the cache
-					ac[i][1].call(ac[i][0]);
-			else
-				Auger.Event.send(window, et); // synchronous (wait)
+			Auger.Event.send(window, et); 				// synchronous (wait)
 			_._start(_._last=h); 						// resume polling
 		}
 	};
