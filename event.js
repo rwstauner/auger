@@ -119,16 +119,24 @@ if(!('onhashchange' in window) || (window.attachEvent && (document.documentMode|
 	Auger.Event.synthesize.hashchange = {_iframe: Auger.Event._isIE, _timer: null};
 	Auger.Event.synthesize.hashchange.init = function(){
 		//throw 'not implemented yet';
-		var _ = Auger.Event.synthesize.hashchange;
+		var _ = Auger.Event.synthesize.hashchange, frame, s,
+			src = "javascript:'<html></html>'", fid = 'auger_event_hashchange_iframe';
 		if( _._iframe ){
-			var frame = document.createElement('iframe');
-			frame.setAttribute('src', 'javascript:"<html></html>"');
-			var s = frame.style;
+			if( document.readyState == 'complete' ){ 		// in case document is already loaded/closed
+				frame = document.createElement('iframe');
+				frame.setAttribute('id', fid);
+				frame.setAttribute('src', src);
+				frame.style.display = 'none';
+				document.body.appendChild(frame);
+			}else{ 											// document isn't ready yet
+				document.write('<iframe id="'+fid+'" src="'+src+'" style="display:none;"></iframe>');
+				frame = document.getElementById(fid);
+			}
+			s = frame.style;
 				s.position = 'absolute';
 				s.top = s.left = '-1px';
 				s.width = s.height = '1px';
 				s.display = 'none';
-			document.body.appendChild(frame);
 			_._iframe = frame.contentWindow;
 			_._iframeUpdate(_._hash());
 		}
