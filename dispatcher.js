@@ -8,7 +8,8 @@ Auger.Dispatcher._perform = function(e){ 	// gets detached (avoid unnecessary cl
 	for(var i=0;i<a.length;++i){
 		var v = null, t = a[i][1];
 		switch(a[i][0]){
-			case 0: v=true; break;
+			case -1: v=true; break; 	// always
+			case 0: v=!h; break; 		// empty/no hash
 			case 1: v=(h.indexOf(t)==0?h.split(t.charAt(t.length-1)):null); break;
 			case 2: v=h.match(t); break;
 			case 3: try{v=t(h);}catch(x){v=null;}; break;
@@ -19,14 +20,17 @@ Auger.Dispatcher._perform = function(e){ 	// gets detached (avoid unnecessary cl
 	}
 };
 // prefix string, regex, or boolean function (allows multiple "apps" on the same page)
-Auger.Dispatcher._dispatch_types = [null, 'string', RegExp, Function];
+Auger.Dispatcher._dispatch_types = ['', 'string', RegExp, Function];
 Auger.Dispatcher.dispatch = function(c,f){
 	var a = Auger.Dispatcher; 	// this
 	var t = a._dispatch_types, d = null;
 	if(!f)
-		d = [0,null,c];
+		d = [-1,null,c]; 				// always
 	else if(typeof(c) == 'string')
-		d = [1,c,f];
+		if(c=='') 						// empty/no hash
+			d = [0,c,f];
+		else 							// prefix
+			d = [1,c,f];
 	else
 		for(var i=2; i<t.length; ++i)
 			if(c instanceof t[i])
