@@ -19,8 +19,3 @@
 - compression:
   - yuicompressor
   - closure compiler
-- License:
-  - MIT?
-  - Apache?
-  - BSD?
-  - L?GPL?
